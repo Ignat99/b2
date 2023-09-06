@@ -1441,7 +1441,7 @@ static bool main2(int argc, char *argv[], const std::shared_ptr<MessageList> &in
                     // constructing a Messages is a bit expensive, but this
                     // doesn't happen all that often...
                     Messages msg(GetMRUMessageList());
-                    JoystickDeviceAdded(event.jdevice.which, &msg);
+//                    JoystickDeviceAdded(event.jdevice.which, &msg);
                 }
                 break;
 
@@ -1450,7 +1450,7 @@ static bool main2(int argc, char *argv[], const std::shared_ptr<MessageList> &in
                     // constructing a Messages is a bit expensive, but this
                     // doesn't happen all that often...
                     Messages msg(GetMRUMessageList());
-                    JoystickDeviceRemoved(event.jdevice.which, &msg);
+//                    JoystickDeviceRemoved(event.jdevice.which, &msg);
                 }
                 break;
 
@@ -1571,7 +1571,7 @@ static bool main2(int argc, char *argv[], const std::shared_ptr<MessageList> &in
         vblank_monitor = nullptr;
         vblank_handler = nullptr;
 
-        CloseJoysticks();
+//        CloseJoysticks();
     }
 
 #if SYSTEM_OSX

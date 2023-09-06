@@ -120,10 +120,10 @@ static void SetPCJoystick(int beeb_index, const std::unique_ptr<PCJoystick> &pc_
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-
+/*
 static void OpenJoystick(int sdl_joystick_device_index, Messages *msg) {
-    SDL_JoystickID id = SDL_JoystickGetDeviceInstanceID(sdl_joystick_device_index);
-    ASSERT(id >= 0);
+//    SDL_JoystickID id = SDL_JoystickGetDeviceInstanceID(sdl_joystick_device_index);
+//    ASSERT(id >= 0);
 
     if (FindPCJoystick(id)) {
         // already open.
@@ -174,10 +174,10 @@ static void OpenJoystick(int sdl_joystick_device_index, Messages *msg) {
         g_pc_joysticks.push_back(std::move(pc_joystick));
     }
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-
+/*
 static void CloseJoystick(SDL_JoystickID id, Messages *msg) {
     for (auto &&it = g_pc_joysticks.begin(); it != g_pc_joysticks.end(); ++it) {
         if ((*it)->id == id) {
@@ -200,25 +200,26 @@ static void CloseJoystick(SDL_JoystickID id, Messages *msg) {
         }
     }
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-
+/*
 void JoystickDeviceAdded(int device_index, Messages *msg) {
-    OpenJoystick(device_index, msg);
+//    OpenJoystick(device_index, msg);
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-
+/*
 void JoystickDeviceRemoved(int device_instance, Messages *msg) {
-    CloseJoystick(device_instance, msg);
+//    CloseJoystick(device_instance, msg);
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
 // Returns true if a single gamepad is driving both Beeb joysticks.
+/*
 static bool AreJoysticksShared() {
     if (g_beeb_joysticks[0].pc_joystick) {
         if (g_beeb_joysticks[0].pc_joystick == g_beeb_joysticks[1].pc_joystick) {
@@ -228,16 +229,17 @@ static bool AreJoysticksShared() {
 
     return false;
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
+/*
 static uint16_t GetAnalogueChannelValueFromJoystickAxisValue(int16_t joystick_axis_value) {
     uint16_t value = (uint16_t) ~((int32_t)joystick_axis_value + 32768);
     value >>= 6;
     return value;
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
@@ -246,7 +248,8 @@ JoystickResult ControllerAxisMotion(int device_instance, int axis, int16_t value
         if (PCJoystick *pc_joystick = FindPCJoystick(device_instance)) {
             pc_joystick->controller_axis_values[axis] = value;
 
-            uint16_t uvalue = GetAnalogueChannelValueFromJoystickAxisValue(value);
+/*            uint16_t uvalue = GetAnalogueChannelValueFromJoystickAxisValue(value);
+
             if (AreJoysticksShared()) {
                 JoystickResult result = {};
                 switch (axis) {
@@ -274,6 +277,7 @@ JoystickResult ControllerAxisMotion(int device_instance, int axis, int16_t value
                 }
 
                 return result;
+
             } else if (g_beeb_joysticks[0].pc_joystick == pc_joystick) {
                 switch (axis) {
                 case SDL_CONTROLLER_AXIS_LEFTX:
@@ -290,7 +294,7 @@ JoystickResult ControllerAxisMotion(int device_instance, int axis, int16_t value
                 case SDL_CONTROLLER_AXIS_LEFTY:
                     return {3, uvalue};
                 }
-            }
+            } */
         }
     }
 
@@ -299,7 +303,7 @@ JoystickResult ControllerAxisMotion(int device_instance, int axis, int16_t value
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-
+/*
 static JoystickResult GetJoystickResultForButton(const PCJoystick *pc_joystick, int button, int8_t beeb_index) {
     JoystickResult jr;
 
@@ -339,7 +343,7 @@ static JoystickResult GetJoystickResultForButton(const PCJoystick *pc_joystick, 
 
     return jr;
 }
-
+*/
 JoystickResult ControllerButton(int device_instance, int button, bool state) {
     if (button >= 0 && button < SDL_CONTROLLER_BUTTON_MAX) {
         if (PCJoystick *pc_joystick = FindPCJoystick(device_instance)) {
@@ -351,7 +355,7 @@ JoystickResult ControllerButton(int device_instance, int button, bool state) {
                 pc_joystick->controller_button_states &= ~mask;
             }
 
-            if (AreJoysticksShared()) {
+/*            if (AreJoysticksShared()) {
                 JoystickResult jr;
 
                 if (button == SDL_CONTROLLER_BUTTON_LEFTSHOULDER) {
@@ -373,7 +377,7 @@ JoystickResult ControllerButton(int device_instance, int button, bool state) {
                 return GetJoystickResultForButton(pc_joystick, button, 0);
             } else if (g_beeb_joysticks[1].pc_joystick == pc_joystick) {
                 return GetJoystickResultForButton(pc_joystick, button, 1);
-            }
+            } */
         }
     }
 
@@ -420,11 +424,11 @@ void DoJoysticksMenuImGui(Messages *msg) {
         }
     }
 
-    if (AreJoysticksShared()) {
+/*    if (AreJoysticksShared()) {
         ImGui::Separator();
 
         ImGui::Checkbox("Swap shared joysticks", &g_swap_shared_joysticks);
-    }
+    }*/
 
     ImGui::Separator();
 

@@ -426,7 +426,7 @@ void ImGuiStuff::RenderSDL() {
     m_draw_lists.resize((size_t)draw_data->CmdListsCount);
 #endif
 
-    SDL_RenderFlush(m_renderer);
+//    SDL_RenderFlush(m_renderer);
 
     glPushAttrib(GL_ALL_ATTRIB_BITS);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);

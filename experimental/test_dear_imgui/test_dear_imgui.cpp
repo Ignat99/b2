@@ -476,7 +476,7 @@ void Window::RenderImGuiDrawData() {
         return;
     }
 
-    SDL_RenderFlush(m_renderer);
+//    SDL_RenderFlush(m_renderer);
 
     int output_width, output_height;
     SDL_GetRendererOutputSize(m_renderer, &output_width, &output_height);

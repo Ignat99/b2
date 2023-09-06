@@ -432,7 +432,7 @@ void TVOutput::FillWithTestPattern() {
 
     uint32_t palette[8];
     for (size_t i = 0; i < 8; ++i) {
-        palette[i] = (i & 1 ? 0xff0000 : 0x000000) | (i & 2 ? 0x00ff00 : 0x000000) | (i & 4 ? 0x0000ff : 0x000000);
+        palette[i] = (uint32_t)((i & 1 ? 0xff0000 : 0x000000) | (i & 2 ? 0x00ff00 : 0x000000) | (i & 4 ? 0x0000ff : 0x000000));
     }
 
     for (int y = 0; y < TV_TEXTURE_HEIGHT; ++y) {

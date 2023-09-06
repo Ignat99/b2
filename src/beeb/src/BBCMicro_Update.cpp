@@ -87,8 +87,8 @@ uint32_t BBCMicro::Update(VideoDataUnit *video_unit, SoundDataUnit *sound_unit) 
     uint8_t phi2_1MHz_trailing_edge = m_state.cycle_count.n & 2;
     uint32_t result = 0;
 
-    if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_Parasite) != 0) {
-        if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_Parasite3MHzExternal) != 0) {
+    if ((UPDATE_FLAGS & BBCMicroUpdateFlag_Parasite) != 0) {
+        if ((UPDATE_FLAGS & BBCMicroUpdateFlag_Parasite3MHzExternal) != 0) {
             // When running in 3 MHz mode, just cheekily skip every 4th update.
             //
             // If tweaking this logic, update Get3MHzCycleCount, conveniently
@@ -101,7 +101,7 @@ uint32_t BBCMicro::Update(VideoDataUnit *video_unit, SoundDataUnit *sound_unit) 
         result |= BBCMicroUpdateResultFlag_Parasite;
         (*m_state.parasite_cpu.tfn)(&m_state.parasite_cpu);
 
-        if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_ParasiteSpecial) != 0) {
+        if ((UPDATE_FLAGS & BBCMicroUpdateFlag_ParasiteSpecial) != 0) {
             if (m_state.parasite_tube.status.bits.t) {
                 ResetTube(&m_state.parasite_tube);
             }
@@ -123,7 +123,7 @@ uint32_t BBCMicro::Update(VideoDataUnit *video_unit, SoundDataUnit *sound_unit) 
                 // This bit is a bit careless about checking for the `Trace`
                 // flag, but that's only an efficiency issue, not important for
                 // parasite special mode.
-                if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_ParasiteSpecial) != 0) {
+                if ((UPDATE_FLAGS & BBCMicroUpdateFlag_ParasiteSpecial) != 0) {
                     if (m_state.parasite_boot_mode) {
 #if BBCMICRO_TRACE
                         if (m_trace) {
@@ -135,7 +135,7 @@ uint32_t BBCMicro::Update(VideoDataUnit *video_unit, SoundDataUnit *sound_unit) 
                     }
                 }
             } else {
-                if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_ParasiteSpecial) != 0) {
+                if ((UPDATE_FLAGS & BBCMicroUpdateFlag_ParasiteSpecial) != 0) {
                     if (m_state.parasite_boot_mode && (m_state.parasite_cpu.abus.w & 0xf000) == 0xf000) {
                         // Really not concerned about the efficiency of special
                         // mode. The emulator is not in this state for long.
@@ -153,13 +153,13 @@ uint32_t BBCMicro::Update(VideoDataUnit *video_unit, SoundDataUnit *sound_unit) 
             }
 
 #if BBCMICRO_DEBUGGER
-            if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_Debug) != 0) {
+            if ((UPDATE_FLAGS & BBCMicroUpdateFlag_Debug) != 0) {
                 // The parasite paging is uncomplicated, and the byte address
                 // flags can be treated as a single 64 KB array.
                 uint8_t flags = (m_debug->parasite_address_debug_flags[m_state.parasite_cpu.abus.w] |
                                  *((uint8_t *)m_debug->big_pages_byte_debug_flags[PARASITE_BIG_PAGE_INDEX] + m_state.parasite_cpu.abus.w));
 
-                if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_ParasiteSpecial) != 0) {
+                if ((UPDATE_FLAGS & BBCMicroUpdateFlag_ParasiteSpecial) != 0) {
                     // Really not concerned about the efficiency of special
                     // mode. The emulator is not in this state for long.
                     if (m_state.parasite_boot_mode && (m_state.parasite_cpu.abus.w & 0xf000) == 0xf000) {
@@ -176,7 +176,7 @@ uint32_t BBCMicro::Update(VideoDataUnit *video_unit, SoundDataUnit *sound_unit) 
         } else {
             if ((m_state.parasite_cpu.abus.w & 0xfff0) == 0xfef0) {
                 (*m_parasite_write_mmio_fns[m_state.parasite_cpu.abus.w & 7])(&m_state.parasite_tube, m_state.parasite_cpu.abus, m_state.parasite_cpu.dbus);
-                if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_ParasiteSpecial) != 0) {
+                if ((UPDATE_FLAGS & BBCMicroUpdateFlag_ParasiteSpecial) != 0) {
                     if (m_state.parasite_boot_mode) {
 #if BBCMICRO_TRACE
                         if (m_trace) {
@@ -193,7 +193,7 @@ uint32_t BBCMicro::Update(VideoDataUnit *video_unit, SoundDataUnit *sound_unit) 
             }
 
 #if BBCMICRO_DEBUGGER
-            if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_Debug) != 0) {
+            if ((UPDATE_FLAGS & BBCMicroUpdateFlag_Debug) != 0) {
                 // The parasite paging is uncomplicated, and the byte address
                 // flags can be treated as a single 64 KB array.
                 uint8_t flags = (m_debug->parasite_address_debug_flags[m_state.parasite_cpu.abus.w] |
@@ -205,7 +205,7 @@ uint32_t BBCMicro::Update(VideoDataUnit *video_unit, SoundDataUnit *sound_unit) 
 #endif
         }
 
-        if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_Trace) != 0) {
+        if ((UPDATE_FLAGS & BBCMicroUpdateFlag_Trace) != 0) {
 #if BBCMICRO_TRACE
             if (M6502_IsAboutToExecute(&m_state.parasite_cpu)) {
                 if (m_trace) {
@@ -234,7 +234,7 @@ uint32_t BBCMicro::Update(VideoDataUnit *video_unit, SoundDataUnit *sound_unit) 
 #endif
         }
 
-        if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_DebugStepParasite) != 0) {
+        if ((UPDATE_FLAGS & BBCMicroUpdateFlag_DebugStepParasite) != 0) {
 #if BBCMICRO_DEBUGGER
             this->DebugHandleStep();
 #endif
@@ -274,7 +274,7 @@ parasite_update_done:
 
         if (!m_state.stretch) {
             // Update CPU data bus.
-            if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_Hacks) != 0) {
+            if ((UPDATE_FLAGS & BBCMicroUpdateFlag_Hacks) != 0) {
                 if (m_state.cpu.read == 0) {
                     if (!m_host_write_fns.empty()) {
                         // Same deal as instruction fns.
@@ -310,7 +310,7 @@ parasite_update_done:
                 }
 
 #if BBCMICRO_DEBUGGER
-                if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_Debug) != 0) {
+                if ((UPDATE_FLAGS & BBCMicroUpdateFlag_Debug) != 0) {
                     uint8_t flags = (m_debug->host_address_debug_flags[m_state.cpu.abus.w] |
                                      m_pc_mem_big_pages[m_state.cpu.opcode_pc.p.p]->byte_debug_flags[m_state.cpu.abus.p.p][m_state.cpu.abus.p.o]);
                     if (flags & BBCMicroByteDebugFlag_AnyBreakReadMask) {
@@ -337,7 +337,7 @@ parasite_update_done:
                 }
 
 #if BBCMICRO_DEBUGGER
-                if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_Debug) != 0) {
+                if ((UPDATE_FLAGS & BBCMicroUpdateFlag_Debug) != 0) {
                     uint8_t flags = (m_debug->host_address_debug_flags[m_state.cpu.abus.w] |
                                      m_pc_mem_big_pages[m_state.cpu.opcode_pc.p.p]->byte_debug_flags[m_state.cpu.abus.p.p][m_state.cpu.abus.p.o]);
 
@@ -348,7 +348,7 @@ parasite_update_done:
 #endif
             }
 
-            if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_Hacks) != 0) {
+            if ((UPDATE_FLAGS & BBCMicroUpdateFlag_Hacks) != 0) {
                 if (M6502_IsAboutToExecute(&m_state.cpu)) {
                     if (!m_host_instruction_fns.empty()) {
 
@@ -419,7 +419,7 @@ parasite_update_done:
                 }
             }
 
-            if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_Trace) != 0) {
+            if ((UPDATE_FLAGS & BBCMicroUpdateFlag_Trace) != 0) {
 #if BBCMICRO_TRACE
                 if (M6502_IsAboutToExecute(&m_state.cpu)) {
                     if (m_trace) {
@@ -453,7 +453,7 @@ parasite_update_done:
 #endif
             }
 
-            if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_DebugStepHost) != 0) {
+            if ((UPDATE_FLAGS & BBCMicroUpdateFlag_DebugStepHost) != 0) {
 #if BBCMICRO_DEBUGGER
                 this->DebugHandleStep();
 #endif
@@ -684,7 +684,7 @@ parasite_update_done:
                 //}
             }
 
-            if constexpr ((UPDATE_FLAGS & BBCMicroUpdateFlag_HasBeebLink) != 0) {
+            if ((UPDATE_FLAGS & BBCMicroUpdateFlag_HasBeebLink) != 0) {
                 m_beeblink->Update(&m_state.user_via);
             }
 
@@ -711,7 +711,7 @@ parasite_update_done:
                 }
 #endif
 
-                if constexpr (UPDATE_FLAGS & BBCMicroUpdateFlag_HasRTC) {
+                if (UPDATE_FLAGS & BBCMicroUpdateFlag_HasRTC) {
                     if (pb.m128_bits.rtc_chip_select &&
                         m_state.old_system_via_pb.m128_bits.rtc_address_strobe &&
                         !pb.m128_bits.rtc_address_strobe) {
@@ -723,7 +723,7 @@ parasite_update_done:
                 m_state.old_system_via_pb = pb;
             }
 
-            if constexpr (UPDATE_FLAGS & BBCMicroUpdateFlag_HasRTC) {
+            if (UPDATE_FLAGS & BBCMicroUpdateFlag_HasRTC) {
                 if (pb.m128_bits.rtc_chip_select &&
                     !pb.m128_bits.rtc_address_strobe) {
                     // AS=0
