@@ -79,3 +79,6 @@
 [submodule "submodules/cassette-elite-beebasm"]
 	path = submodules/cassette-elite-beebasm
 	url = https://github.com/Ignat99/cassette-elite-beebasm
+[submodule "submodules/ninja"]
+	path = submodules/ninja
+	url = https://github.com/ninja-build/ninja
